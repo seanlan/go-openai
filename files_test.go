@@ -1,8 +1,8 @@
 package openai //nolint:testpackage // testing private field
 
 import (
-	"github.com/sashabaranov/go-openai/internal/test"
-	"github.com/sashabaranov/go-openai/internal/test/checks"
+	"github.com/seanlan/go-openai/internal/test"
+	"github.com/seanlan/go-openai/internal/test/checks"
 
 	"context"
 	"encoding/json"
@@ -107,7 +107,7 @@ func TestFileUploadWithFailingFormBuilder(t *testing.T) {
 	mockBuilder.mockWriteField = func(string, string) error {
 		return nil
 	}
-	mockBuilder.mockCreateFormFile = func(string, *os.File) error {
+	mockBuilder.mockCreateFormFile = func(string, io.Reader) error {
 		return mockError
 	}
 	_, err = client.CreateFile(ctx, req)
@@ -117,7 +117,7 @@ func TestFileUploadWithFailingFormBuilder(t *testing.T) {
 	mockBuilder.mockWriteField = func(string, string) error {
 		return nil
 	}
-	mockBuilder.mockCreateFormFile = func(string, *os.File) error {
+	mockBuilder.mockCreateFormFile = func(string, io.Reader) error {
 		return nil
 	}
 	mockBuilder.mockClose = func() error {

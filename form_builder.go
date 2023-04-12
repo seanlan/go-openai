@@ -3,11 +3,10 @@ package openai
 import (
 	"io"
 	"mime/multipart"
-	"os"
 )
 
 type formBuilder interface {
-	createFormFile(fieldname string, file *os.File) error
+	createFormFile(fieldname string, file io.Reader) error
 	writeField(fieldname, value string) error
 	close() error
 	formDataContentType() string
@@ -23,8 +22,8 @@ func newFormBuilder(body io.Writer) *defaultFormBuilder {
 	}
 }
 
-func (fb *defaultFormBuilder) createFormFile(fieldname string, file *os.File) error {
-	fieldWriter, err := fb.writer.CreateFormFile(fieldname, file.Name())
+func (fb *defaultFormBuilder) createFormFile(fieldname string, file io.Reader) error {
+	fieldWriter, err := fb.writer.CreateFormFile(fieldname, fieldname)
 	if err != nil {
 		return err
 	}

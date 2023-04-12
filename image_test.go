@@ -1,8 +1,8 @@
 package openai //nolint:testpackage // testing private field
 
 import (
-	"github.com/sashabaranov/go-openai/internal/test"
-	"github.com/sashabaranov/go-openai/internal/test/checks"
+	"github.com/seanlan/go-openai/internal/test"
+	"github.com/seanlan/go-openai/internal/test/checks"
 
 	"context"
 	"encoding/json"
@@ -260,12 +260,12 @@ func handleVariateImageEndpoint(w http.ResponseWriter, r *http.Request) {
 }
 
 type mockFormBuilder struct {
-	mockCreateFormFile func(string, *os.File) error
+	mockCreateFormFile func(string, io.Reader) error
 	mockWriteField     func(string, string) error
 	mockClose          func() error
 }
 
-func (fb *mockFormBuilder) createFormFile(fieldname string, file *os.File) error {
+func (fb *mockFormBuilder) createFormFile(fieldname string, file io.Reader) error {
 	return fb.mockCreateFormFile(fieldname, file)
 }
 
@@ -297,13 +297,13 @@ func TestImageFormBuilderFailures(t *testing.T) {
 	}
 
 	mockFailedErr := fmt.Errorf("mock form builder fail")
-	mockBuilder.mockCreateFormFile = func(string, *os.File) error {
+	mockBuilder.mockCreateFormFile = func(string, io.Reader) error {
 		return mockFailedErr
 	}
 	_, err := client.CreateEditImage(ctx, req)
 	checks.ErrorIs(t, err, mockFailedErr, "CreateImage should return error if form builder fails")
 
-	mockBuilder.mockCreateFormFile = func(name string, file *os.File) error {
+	mockBuilder.mockCreateFormFile = func(name string, file io.Reader) error {
 		if name == "mask" {
 			return mockFailedErr
 		}
@@ -312,7 +312,7 @@ func TestImageFormBuilderFailures(t *testing.T) {
 	_, err = client.CreateEditImage(ctx, req)
 	checks.ErrorIs(t, err, mockFailedErr, "CreateImage should return error if form builder fails")
 
-	mockBuilder.mockCreateFormFile = func(name string, file *os.File) error {
+	mockBuilder.mockCreateFormFile = func(name string, file io.Reader) error {
 		return nil
 	}
 
@@ -358,13 +358,13 @@ func TestVariImageFormBuilderFailures(t *testing.T) {
 	req := ImageVariRequest{}
 
 	mockFailedErr := fmt.Errorf("mock form builder fail")
-	mockBuilder.mockCreateFormFile = func(string, *os.File) error {
+	mockBuilder.mockCreateFormFile = func(string, io.Reader) error {
 		return mockFailedErr
 	}
 	_, err := client.CreateVariImage(ctx, req)
 	checks.ErrorIs(t, err, mockFailedErr, "CreateVariImage should return error if form builder fails")
 
-	mockBuilder.mockCreateFormFile = func(name string, file *os.File) error {
+	mockBuilder.mockCreateFormFile = func(name string, file io.Reader) error {
 		return nil
 	}
 

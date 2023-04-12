@@ -8,12 +8,11 @@ import (
 	"mime"
 	"mime/multipart"
 	"net/http"
-	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/sashabaranov/go-openai/internal/test"
-	"github.com/sashabaranov/go-openai/internal/test/checks"
+	"github.com/seanlan/go-openai/internal/test"
+	"github.com/seanlan/go-openai/internal/test/checks"
 
 	"context"
 	"testing"
@@ -184,13 +183,13 @@ func TestAudioWithFailingFormBuilder(t *testing.T) {
 	mockFailedErr := fmt.Errorf("mock form builder fail")
 	mockBuilder := &mockFormBuilder{}
 
-	mockBuilder.mockCreateFormFile = func(string, *os.File) error {
+	mockBuilder.mockCreateFormFile = func(string, io.Reader) error {
 		return mockFailedErr
 	}
 	err := audioMultipartForm(req, mockBuilder)
 	checks.ErrorIs(t, err, mockFailedErr, "audioMultipartForm should return error if form builder fails")
 
-	mockBuilder.mockCreateFormFile = func(string, *os.File) error {
+	mockBuilder.mockCreateFormFile = func(string, io.Reader) error {
 		return nil
 	}
 

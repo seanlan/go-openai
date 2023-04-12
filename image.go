@@ -3,6 +3,7 @@ package openai
 import (
 	"bytes"
 	"context"
+	"io"
 	"net/http"
 	"os"
 	"strconv"
@@ -55,11 +56,11 @@ func (c *Client) CreateImage(ctx context.Context, request ImageRequest) (respons
 
 // ImageEditRequest represents the request structure for the image API.
 type ImageEditRequest struct {
-	Image  *os.File `json:"image,omitempty"`
-	Mask   *os.File `json:"mask,omitempty"`
-	Prompt string   `json:"prompt,omitempty"`
-	N      int      `json:"n,omitempty"`
-	Size   string   `json:"size,omitempty"`
+	Image  io.Reader `json:"image,omitempty"`
+	Mask   io.Reader `json:"mask,omitempty"`
+	Prompt string    `json:"prompt,omitempty"`
+	N      int       `json:"n,omitempty"`
+	Size   string    `json:"size,omitempty"`
 }
 
 // CreateEditImage - API call to create an image. This is the main endpoint of the DALL-E API.
